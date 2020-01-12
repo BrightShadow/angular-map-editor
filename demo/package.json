@@ -1,11 +1,11 @@
 {
     "name": "map-editor-app",
-    "version": "0.0.1",
-	"license": "MIT",
-	"repository": {
-	  "type" : "git",
-	  "url" : "https://github.com/BrightShadow/angular-map-editor"
-	},
+    "version": "0.1.4",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/BrightShadow/angular-map-editor"
+    },
     "scripts": {
         "ng": "ng",
         "start": "ng serve",
