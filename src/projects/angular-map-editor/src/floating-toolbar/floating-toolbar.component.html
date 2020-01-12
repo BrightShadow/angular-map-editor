@@ -1,0 +1,31 @@
+<div class="toolbar"
+     [style.left.px]="posLeft"
+     [style.top.px]="posTop">
+
+    <ng-container *ngFor="let item of items; let idx = index">
+        <so-floating-button
+            [caption]="item.caption"
+            [iconFileName]="item.icon"
+            [posLeft]="0"
+            [posTop]="items.length * 60 - (idx + 1) * 50"
+            (buttonClick)="onItemClick(item.items ? undefined : item, item.items ? innerId + 'sub-menu-' + idx.toString() : undefined)"
+        ></so-floating-button>
+
+        <div *ngIf="item.items" [id]="innerId + 'sub-menu-' + idx.toString()" [style.top.px]="items.length * 60 - (idx + 1) * 50 + 10"
+             style="left: 0; position: absolute; display: none">
+            <ng-container *ngFor="let subItem of item.items; let subIdx = index">
+                <so-floating-button
+                    [caption]="subItem.caption"
+                    [iconFileName]="subItem.icon"
+                    [posLeft]="70 + 50 * subIdx"
+                    [posTop]="0"
+                    (buttonClick)="onItemClick(subItem, innerId + 'sub-menu-' + idx.toString(), true, idx)"
+                    [isMiniButton]="true"
+                ></so-floating-button>
+            </ng-container>
+        </div>
+
+
+    </ng-container>
+
+</div>

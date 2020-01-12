@@ -1,0 +1,66 @@
+<div class="map-editor-container {{isLoading ? 'is-loading' : ''}}" [style.margin]="margin">
+
+    <div class="editor-container" [style.marginLeft]="visible.asideMarginSpace ? '90px' : '0'"
+         [style.border-left]="(visible.asideMarginSpace ? '1px dashed rgba(0,0,0,0.1)' : 'none') | safe:'style'">
+        <div id="editorBox" class="editor-box map-editor-content">
+            <canvas width="800" height="800" id="editor" class="map-editor-canvas"></canvas>
+        </div>
+    </div>
+
+    <ng-container *ngIf="visible.adminToolbar">
+        <button mat-fab color="secondary" style="position: absolute; bottom: 20px; left: 20px;"
+                (click)="onConfigClick()">
+            <img [attr.src]="'icon-config.png' | asset | async" alt="Configuration">
+        </button>
+        <div *ngIf="showConfigMenu" style="position: absolute; bottom: 25px; left: 90px;">
+            <button mat-mini-fab color="secondary" style="margin-right: 10px"
+                    matTooltip="Save configuration and all maps"
+                    (click)="onSaveConfigClick()">
+                <img [attr.src]="'icon-save-config.png' | asset | async" alt="Save configuration">
+            </button>
+            <button mat-mini-fab color="secondary" style="margin-right: 10px" matTooltip="Download configuration"
+                    (click)="onDownloadConfigClick()">
+                <img [attr.src]="'icon-download-config.png' | asset | async" alt="Download configuration">
+            </button>
+            <button mat-mini-fab color="secondary" style="margin-right: 10px" matTooltip="Upload new configuration"
+                    (click)="onUploadConfigClick()">
+                <img [attr.src]="'icon-upload-config.png' | asset | async" alt="Upload configuration">
+            </button>
+            <button mat-mini-fab color="secondary" style="margin-right: 10px" matTooltip="Upload floor map as JSON"
+                    (click)="onUploadJsonMapClick()">
+                <img [attr.src]="'icon-upload-json.png' | asset | async" alt="Upload JSON file">
+            </button>
+            <button mat-mini-fab color="secondary" style="margin-right: 10px" matTooltip="Download floor map as JSON"
+                    (click)="onDownloadJsonMapClick()">
+                <img [attr.src]="'icon-download-json.png' | asset | async" alt="Downaload JSON file">
+            </button>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="visible.floorsToolbar">
+
+        <button *ngFor="let map of floorMaps; let idx = index" mat-fab color="secondary"
+                [style]="'position: absolute; bottom: ' + (90 + idx * 50) + 'px; left: 20px;' | safe:'style'"
+                [style.border]="currentFloorMap?.id === map.id ? '1px solid #0073b2' : 'none'"
+                matTooltip="Load map of floor {{map.id}}"
+                matTooltipPosition="right"
+                (click)="onLoadMapClick(map.id)">
+            <img [attr.src]="map.icon | asset | async" alt="Floor {{map.id}}">
+        </button>
+
+    </ng-container>
+
+    <so-floating-toolbar *ngIf="visible.objectsToolbar" [posLeft]="20" [posTop]="70"
+                         [items]="adminToolbarItems | async"
+                         (itemClick)="onObjectSelected($event)"></so-floating-toolbar>
+
+    <so-floating-toolbar *ngIf="visible.toolsToolbar" [posLeft]="20" [posTop]="0"
+                         [items]="objectToolbarItems | async"
+                         (itemClick)="onObjectSelected($event)"></so-floating-toolbar>
+</div>
+
+<div class="map-editor-progress" *ngIf="isLoading">
+    <div style="position: absolute; left: 50%; top: 50%">
+        <mat-progress-spinner color="primary" mode="indeterminate"></mat-progress-spinner>
+    </div>
+</div>

@@ -1,0 +1,27 @@
+<ng-container *ngIf="!isMiniButton">
+    <button mat-fab [color]="buttonColor"
+            class="floating-button"
+            [style.left.px]="posLeft"
+            [style.top.px]="posTop"
+            [style.bottom.px]="posBottom"
+            [style.right.px]="posRight"
+            [matTooltip]="caption"
+            matTooltipPosition="right"
+            (click)="onClick()">
+        <img [attr.src]="iconFileName | asset | async" [alt]="caption">
+    </button>
+</ng-container>
+
+<ng-container *ngIf="isMiniButton">
+    <button mat-mini-fab [color]="buttonColor"
+            class="floating-button"
+            [style.left.px]="posLeft"
+            [style.top.px]="posTop"
+            [style.bottom.px]="posBottom"
+            [style.right.px]="posRight"
+            [matTooltip]="caption"
+            (click)="onClick()">
+        <img [attr.src]="iconFileName | asset | async" [alt]="caption">
+    </button>
+</ng-container>
+

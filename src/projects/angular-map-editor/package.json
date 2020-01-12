@@ -1,0 +1,22 @@
+{
+    "name": "angular-map-editor",
+	"license": "MIT",
+	"repository": {
+	  "type" : "git",
+	  "url" : "https://github.com/BrightShadow/angular-map-editor"
+	},
+    "version": "0.1.4",
+    "keywords": ["map", "floor", "editor", "canvas", "angular", "interactive", "grid", "typescript", "material", "design"],
+    "peerDependencies": {
+        "@angular/common": "^8.2.11",
+        "@angular/core": "^8.2.11",
+        "@angular/material": "^8.2.3",
+        "@angular/cdk": "~8.2.3"
+    },
+    "dependencies": {
+        "lodash": "^4.17.15"
+    },
+    "devDependencies": {
+        "@types/lodash": "^4.14.144"
+    }
+}

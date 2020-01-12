@@ -1,0 +1,45 @@
+<mat-toolbar color="primary" fxLayout>
+    <div fxFlex="50px"><img src="https://brightshadow.github.io/angular-map-editor/assets/logo.png"
+                            style="margin-top: 7px"></div>
+    <div fxFlex="80%">Angular Map Editor DEMO</div>
+    <div fxFlex style="text-align: right">
+        <a href="https://www.npmjs.com/package/angular-map-editor" target="_blank" title="Library NPM page"><img
+            src="https://brightshadow.github.io/angular-map-editor/assets/npm.png" style="margin-top: 7px"></a>
+    </div>
+</mat-toolbar>
+<div fxLayout fxLayoutGap="1em" class="settings">
+    <mat-card>
+        <mat-card-content fxLayout="column" fxLayoutGap="5px">
+            <h4>User roles</h4>
+            <mat-checkbox [checked]="true" (change)="onRoleSet('viewer', $event)">Viewer (default)</mat-checkbox>
+            <mat-checkbox [checked]="false" (change)="onRoleSet('map-editor', $event)">Map Editor</mat-checkbox>
+            <mat-checkbox [checked]="false" (change)="onRoleSet('admin', $event)">Admin</mat-checkbox>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+        <mat-card-content fxLayout="column" fxLayoutGap="5px">
+            <h4>Configurations</h4>
+            <mat-radio-button [checked]="true" (change)="onConfigSet(0, $event)">Minimal (default)</mat-radio-button>
+            <mat-radio-button [checked]="false" (change)="onConfigSet(1, $event)">Colorful</mat-radio-button>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+        <mat-card-content fxLayout="column" fxLayoutGap="5px">
+            <h4>Events log</h4>
+            <div class="log">
+                <div class="log-line" *ngFor="let log of logs">{{log}}</div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<so-map-editor
+    [configuration]="configuration"
+    (configurationSaved)="onConfigSaved($event)"
+    [userRoles]="roles"
+    [margin]="'270px 0 0 0'"
+></so-map-editor>
+
+<div class="version">v0.1.2</div>
