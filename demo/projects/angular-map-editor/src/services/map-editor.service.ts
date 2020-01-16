@@ -24,7 +24,7 @@ export class MapEditorService {
     private activeObject: MapObject;
     private hoveredObject: MapObject;
     private snapToGrid = true;
-    private gridSize = 4;
+    private gridSize = 10;
     private showGrid = true;
     private selectingMode = false;
     private mousePos: XY;
@@ -82,6 +82,12 @@ export class MapEditorService {
                 this.redraw();
                 this.changed.next();
             });
+
+        this.initGlobalEventHooks();
+    }
+
+    public resetToInitialState(): void {
+        this.initialized = false;
     }
 
     /**
@@ -197,6 +203,11 @@ export class MapEditorService {
      */
     public loadMap(map: MapConfig): Observable<any> {
         return new Observable(o => {
+            if (!this.initialized) {
+                o.next();
+                o.complete();
+                return;
+            }
             this.clear();
             this.currentFloorMap = map;
             const data = this.assets.getOther(map.backgroundImage);
@@ -326,8 +337,6 @@ export class MapEditorService {
         this.editor.addEventListener('click', (event: MouseEvent) => {
             this.onEditorClick(event);
         });
-
-        this.initGlobalEventHooks();
 
     }
 

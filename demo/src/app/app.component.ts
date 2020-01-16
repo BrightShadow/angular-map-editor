@@ -12,6 +12,7 @@ export class AppComponent implements OnInit {
     public configuration: Configuration;
     public roles: string[] = ['viewer'];
     public logs: string[] = [];
+    public isEditorVisible = true;
 
     constructor(private configs: ConfigProvider) {
 
@@ -51,6 +52,12 @@ export class AppComponent implements OnInit {
             this.configuration = this.configs.colorfulConfig;
             this.log(`[Event] Configuration changed to ColorfulConfig`);
         }
+    }
+
+    public toggleComponentVisibility(): void {
+        this.isEditorVisible = !this.isEditorVisible;
+
+        this.log(`[Event] Toggle visibility => ${this.isEditorVisible ? 'visible' : 'hidden'}`);
     }
 
     private log(msg: string): void {

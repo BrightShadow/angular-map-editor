@@ -27,6 +27,15 @@
 
     <mat-card>
         <mat-card-content fxLayout="column" fxLayoutGap="5px">
+            <h4>Actions</h4>
+            <button mat-raised-button
+                    (click)="toggleComponentVisibility()"
+                    matTooltip="Toggling visiblity ensures correct component initialization.">Toggle visibility</button>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+        <mat-card-content fxLayout="column" fxLayoutGap="5px">
             <h4>Events log</h4>
             <div class="log">
                 <div class="log-line" *ngFor="let log of logs">{{log}}</div>
@@ -35,7 +44,7 @@
     </mat-card>
 </div>
 
-<so-map-editor
+<so-map-editor *ngIf="isEditorVisible"
     [configuration]="configuration"
     (configurationSaved)="onConfigSaved($event)"
     [userRoles]="roles"

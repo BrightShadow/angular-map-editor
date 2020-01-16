@@ -1,4 +1,4 @@
-import {EventEmitter, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import * as _ from 'lodash';
 import {AssetsConfig, Configuration, EditorSettings, MapConfig, MapObjectConfig, ToolbarItemSettings} from '../models/configuration';
 import {ReplaySubject} from 'rxjs';

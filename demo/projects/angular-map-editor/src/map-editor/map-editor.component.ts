@@ -4,7 +4,7 @@ import {
     ElementRef,
     EventEmitter,
     Input,
-    OnChanges,
+    OnChanges, OnDestroy,
     OnInit,
     Output,
     SimpleChanges,
@@ -18,17 +18,21 @@ import {ConfigService} from '../services/config.service';
 import {FilesService} from '../services/files.service';
 import {MatDialog} from '@angular/material';
 import {DialogData, QuestionDialogComponent} from '../question-dialog/question-dialog.component';
-import {Observable, zip} from 'rxjs';
+import {Observable, Subject, zip} from 'rxjs';
 import {Role} from '../models/role.enum';
-import {map, tap} from 'rxjs/operators';
+import {map, takeUntil} from 'rxjs/operators';
 import {ObjectsProviderService} from '../services/objects-provider.service';
 
 @Component({
     selector: 'so-map-editor', templateUrl: './map-editor.component.html', styleUrls: ['./map-editor.component.css']
 })
-export class MapEditorComponent implements OnInit, AfterViewInit, OnChanges {
+export class MapEditorComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
-    @ViewChild('downloadLink', {static: false}) downloadLink: ElementRef;
+    private unsubscribe$ = new Subject();
+    private initialized = false;
+
+    @ViewChild('downloadLink', {static: false})
+    public downloadLink: ElementRef;
 
     /**
      * A full map editor configuration model.
@@ -69,7 +73,7 @@ export class MapEditorComponent implements OnInit, AfterViewInit, OnChanges {
     };
     public adminToolbarItems: Observable<ToolbarItemSettings[]>;
     public objectToolbarItems: Observable<ToolbarItemSettings[]>;
-    private initialized = false;
+
 
     constructor(private service: MapEditorService,
                 private assets: AssetsProviderService,
@@ -78,14 +82,20 @@ export class MapEditorComponent implements OnInit, AfterViewInit, OnChanges {
                 private objectsProvider: ObjectsProviderService,
                 public dialog: MatDialog) {
 
-        this.service.changed.subscribe(() => {
-            this.onRolesUpdates(_.isNil(this.userRoles) ? [] : this.userRoles);
-            this.isLoading = true;
-            this.reloadConfig()
-                .subscribe(() => {
-                    setTimeout(() => this.isLoading = false, 200);
-                });
-        });
+        console.log(`[mec] Constructor`);
+
+        this.service.resetToInitialState();
+
+        this.service.changed
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe(() => {
+                this.onRolesUpdates(_.isNil(this.userRoles) ? [] : this.userRoles);
+                this.isLoading = true;
+                this.reloadConfig()
+                    .subscribe(() => {
+                        setTimeout(() => this.isLoading = false, 200);
+                    });
+            });
 
 
         this.adminToolbarItems = zip(assets.changed, config.changed, service.changed, objectsProvider.changed)
@@ -134,6 +144,7 @@ export class MapEditorComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     public ngOnInit(): void {
+        console.log(`[mec] ngOnInit`);
         // load configuration from Input param
         if (this.configuration) {
             this.config.setConfig(this.configuration);
@@ -143,7 +154,14 @@ export class MapEditorComponent implements OnInit, AfterViewInit, OnChanges {
         this.initialized = true;
     }
 
+    public ngOnDestroy(): void {
+        console.log(`[mec] ngOnDestroy`);
+        this.unsubscribe$.next();
+        this.unsubscribe$.complete();
+    }
+
     public ngAfterViewInit(): void {
+        console.log(`[mec] ngAfterViewInit`);
         this.service.setReadOnlyMode(true);
     }
 
@@ -275,6 +293,7 @@ export class MapEditorComponent implements OnInit, AfterViewInit, OnChanges {
             // open new
             this.currentFloorMap = this.floorMapsDict[floor];
             this.service.loadMap(this.currentFloorMap)
+                .pipe(takeUntil(this.unsubscribe$))
                 .subscribe(() => {
                 });
         }
@@ -290,7 +309,7 @@ export class MapEditorComponent implements OnInit, AfterViewInit, OnChanges {
         this.currentFloorMap.renderedImage = snapMap.renderedImage;
         this.currentFloorMap.backgroundImage = snapMap.backgroundImage;
         this.currentFloorMap.mapWidth = snapMap.mapWidth;
-        this.currentFloorMap.mapHeight= snapMap.mapHeight;
+        this.currentFloorMap.mapHeight = snapMap.mapHeight;
     }
 
     private updateLocalConfig(): void {
@@ -331,8 +350,10 @@ export class MapEditorComponent implements OnInit, AfterViewInit, OnChanges {
 
         if (roles.length === 0 || roles.length === 1 && roles[0] === Role.Viewer) {
             this.service.toggleGrid(false);
-            this.service.setReadOnlyMode(true).subscribe(() => {
-            });
+            this.service.setReadOnlyMode(true)
+                .pipe(takeUntil(this.unsubscribe$))
+                .subscribe(() => {
+                });
         } else {
 
             if (_.includes(roles, Role.Admin)) {
@@ -341,8 +362,10 @@ export class MapEditorComponent implements OnInit, AfterViewInit, OnChanges {
                 this.visible.toolsToolbar = true;
                 this.visible.asideMarginSpace = true;
                 if (this.service.isReadOnly) {
-                    this.service.setReadOnlyMode(false).subscribe(() => {
-                    });
+                    this.service.setReadOnlyMode(false)
+                        .pipe(takeUntil(this.unsubscribe$))
+                        .subscribe(() => {
+                        });
                 }
                 return;
             }
@@ -352,8 +375,10 @@ export class MapEditorComponent implements OnInit, AfterViewInit, OnChanges {
                 this.visible.toolsToolbar = true;
                 this.visible.asideMarginSpace = true;
                 if (this.service.isReadOnly) {
-                    this.service.setReadOnlyMode(false).subscribe(() => {
-                    });
+                    this.service.setReadOnlyMode(false)
+                        .pipe(takeUntil(this.unsubscribe$))
+                        .subscribe(() => {
+                        });
                 }
             }
 

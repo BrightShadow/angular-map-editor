@@ -26,7 +26,7 @@ export class HistoryService {
 }
 
 export abstract class HistoryEntry {
-    public readonly type: HistoryEntryType;
+    public type: HistoryEntryType;
     public affected: MapObject[];
 }
 
